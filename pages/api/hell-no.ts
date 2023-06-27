@@ -4,5 +4,5 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<string>
 ) {
-  res.status(200).json("Hello!");
+  res.status(200).json("hell no!");
 }

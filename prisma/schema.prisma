@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("NEXT_PUBLIC_DATABASE_URL")
+// }
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  email     String    @unique
+  // multiple profiles eliminates need for alt accounts
+  profile   Profile[]
+}
+
+model Profile {
+  id           String         @id @default(uuid())
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  deletedAt    DateTime?
+  user         User           @relation(fields: [userId], references: [id])
+  userId       String
+  username     String         @unique
+  color        String
+  comments     Comment[]
+  commentVotes CommentVotes[]
+  postVotes    PostVotes[]
+  ForumUsers   ForumUsers[]
+  ForumAdmins  ForumAdmins[]
+}
+
+model Forum {
+  slug        String        @id @unique
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
+  name        String
+  description String
+  isNSFW      Boolean       @default(false)
+  isPrivate   Boolean       @default(false)
+  posts       Post[]
+  ForumUsers  ForumUsers[]
+  ForumAdmins ForumAdmins[]
+}
+
+model ForumUsers {
+  profile   Profile @relation(fields: [profileId], references: [id])
+  forum     Forum   @relation(fields: [forumSlug], references: [slug])
+  profileId String
+  forumSlug String
+
+  @@id([profileId, forumSlug])
+}
+
+model ForumAdmins {
+  profile   Profile @relation(fields: [profileId], references: [id])
+  forum     Forum   @relation(fields: [forumSlug], references: [slug])
+  profileId String
+  forumSlug String
+
+  @@id([profileId, forumSlug])
+}
+
+model Post {
+  id        String      @id @default(uuid())
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime?
+  title     String
+  content   String
+  votes     PostVotes[]
+  Forum     Forum?      @relation(fields: [forumSlug], references: [slug])
+  forumSlug String?
+}
+
+model Comment {
+  id        String         @id @default(uuid())
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  deletedAt DateTime?
+  author    Profile        @relation(fields: [profileId], references: [id])
+  profileId String
+  parentId  String?
+  parent    Comment?       @relation("CommentReply", fields: [parentId], references: [id])
+  replies   Comment[]      @relation("CommentReply")
+  votes     CommentVotes[]
+}
+
+model CommentVotes {
+  profile   Profile @relation(fields: [profileId], references: [id])
+  comment   Comment @relation(fields: [commentId], references: [id])
+  profileId String
+  commentId String
+
+  @@id([profileId, commentId])
+}
+
+model PostVotes {
+  profile   Profile @relation(fields: [profileId], references: [id])
+  post      Post    @relation(fields: [postId], references: [id])
+  profileId String
+  postId    String
+
+  @@id([profileId, postId])
+}
