@@ -1,5 +1,4 @@
 import { useRouter } from "next/navigation";
-import CreateProfileOverlay from "@/components/CreateProfileOverlay";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Menu, ThemeIcon, ScrollArea } from "@mantine/core";
 import {
@@ -24,13 +23,13 @@ function ProfileIcon({ icon, color }: IProfileIcon) {
   );
 }
 
-interface IAuthenticatedMenu {}
+interface IAuthenticatedMenu {
+  toggleProfileOverlay: () => void;
+}
 
-function AuthenticatedMenu({}: IAuthenticatedMenu) {
+function AuthenticatedMenu({ toggleProfileOverlay }: IAuthenticatedMenu) {
+  const { logoutUser } = useAuthContext();
   const router = useRouter();
-  const { logoutUser, currentAuthenticatedUser } = useAuthContext();
-  const [showProfileOverlay, setShowProfileOverlay] = useState(false);
-  const toggleProfileOverlay = () => setShowProfileOverlay((prev) => !prev);
 
   const headerDropdownActions = [
     {
@@ -66,7 +65,7 @@ function AuthenticatedMenu({}: IAuthenticatedMenu) {
       <Menu.Item
         color="blue"
         icon={<IconUserPlus size={14} />}
-        onClick={() => setShowProfileOverlay(true)}
+        onClick={toggleProfileOverlay}
       >
         Create a profile
       </Menu.Item>
@@ -77,10 +76,6 @@ function AuthenticatedMenu({}: IAuthenticatedMenu) {
       >
         Log out
       </Menu.Item>
-      <CreateProfileOverlay
-        opened={showProfileOverlay}
-        onClose={toggleProfileOverlay}
-      />
     </>
   );
 }
