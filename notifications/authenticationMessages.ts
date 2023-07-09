@@ -11,3 +11,10 @@ export const successfulLogout: INotificationMessage = {
   message: "You have successfully logged out of the application",
   color: "green",
 };
+
+export const successfulLogin: INotificationMessage = {
+  id: "log-in-success",
+  title: "",
+  message: "You have successfully logged in to the application",
+  color: "green",
+};

@@ -5,10 +5,12 @@ interface ICodeScreen {
   setCode: (code: string) => void;
   handleChangeSlide: (activeSlide: number) => void;
   handleSubmitCode: () => void;
+  isLoading: boolean;
 }
 
 function CodeScreen({
   code,
+  isLoading,
   setCode,
   handleChangeSlide,
   handleSubmitCode,
@@ -28,7 +30,11 @@ function CodeScreen({
         <Button onClick={() => handleChangeSlide(0)} color="gray">
           Go back
         </Button>
-        <Button onClick={handleSubmitCode} disabled={code.length !== 6}>
+        <Button
+          onClick={handleSubmitCode}
+          disabled={code.length !== 6}
+          loading={isLoading}
+        >
           Submit Code
         </Button>
       </Group>

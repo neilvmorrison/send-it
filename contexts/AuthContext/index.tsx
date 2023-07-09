@@ -1,4 +1,7 @@
-import { successfulLogout } from "@/notifications/authenticationMessages";
+import {
+  successfulLogout,
+  successfulLogin,
+} from "@/notifications/authenticationMessages";
 import {
   genericAuthenticationErrorNotification,
   userNotFoundAuthenticationError,
@@ -7,6 +10,7 @@ import {
 } from "@/utils/helpers/errorMessages/errorNotifications";
 import Auth, { CognitoUser } from "@aws-amplify/auth";
 import { notifications } from "@mantine/notifications";
+import { modals } from "@mantine/modals";
 import { v4 } from "uuid";
 import { useState, useContext, createContext, useEffect, useMemo } from "react";
 
@@ -44,6 +48,7 @@ function AuthContextProvider({ children }: IAuthContextProvider) {
 
   async function loginUser(email: string) {
     try {
+      setIsLoading(true);
       const result = await Auth.signIn(email);
       setCognitoUser(result);
     } catch (err: any) {
@@ -53,21 +58,37 @@ function AuthContextProvider({ children }: IAuthContextProvider) {
       }
       notifications.show(genericAuthenticationErrorNotification);
       throw new Error();
+    } finally {
+      setIsLoading(false);
     }
   }
 
   async function sendChallengeResponse(code: string) {
     try {
+      setIsLoading(true);
       await Auth.sendCustomChallengeAnswer(cognitoUser, code);
-    } catch (err) {
+      getCurrentSession();
+      notifications.show(successfulLogin);
+      modals.closeAll();
+    } catch (err: any) {
       notifications.show(invalidCodeSubmitError);
-      throw new Error();
+      throw new Error(err);
+    } finally {
+      setIsLoading(false);
     }
   }
 
   async function logoutUser() {
-    await Auth.signOut();
-    notifications.show(successfulLogout);
+    try {
+      setIsLoading(true);
+      await Auth.signOut();
+      setCurrentAuthenticatedUser(null);
+      notifications.show(successfulLogout);
+    } catch (err: any) {
+      throw new Error(err);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   async function signUpUserAndLogin(email: string): Promise<void> {

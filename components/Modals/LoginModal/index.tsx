@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { modals } from "@mantine/modals";
 import { useAuthContext } from "@/contexts/AuthContext";
 
 import EmailScreen from "./EmailScreen";
@@ -9,7 +10,7 @@ interface ILoginModal {
 }
 
 function LoginModal({ variant }: ILoginModal) {
-  const { loginUser, sendChallengeResponse, signUpUserAndLogin } =
+  const { loginUser, sendChallengeResponse, signUpUserAndLogin, isLoading } =
     useAuthContext();
 
   const [activeSlide, setActiveSlide] = useState(0);
@@ -23,6 +24,7 @@ function LoginModal({ variant }: ILoginModal) {
 
   const handleSubmitCode = async () => {
     await sendChallengeResponse(code);
+    modals.close("login-modal");
   };
 
   const handleSendSignupCode = async () => {
@@ -40,6 +42,7 @@ function LoginModal({ variant }: ILoginModal) {
             variant === "LOGIN" ? handleSendCode : handleSendSignupCode
           }
           handleChangeSlide={setActiveSlide}
+          isLoading={isLoading}
         />
       );
     case 1:
@@ -49,6 +52,7 @@ function LoginModal({ variant }: ILoginModal) {
           setCode={setCode}
           handleChangeSlide={setActiveSlide}
           handleSubmitCode={variant === "LOGIN" ? handleSubmitCode : () => {}}
+          isLoading={isLoading}
         />
       );
     default:

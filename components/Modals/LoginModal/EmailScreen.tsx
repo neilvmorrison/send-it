@@ -14,9 +14,15 @@ interface IEmailScreen {
   setEmail: (email: string) => void;
   handleSendCode: () => void;
   handleChangeSlide: (activeSlide: number) => void;
+  isLoading: boolean;
 }
 
-function EmailScreen({ email, setEmail, handleSendCode }: IEmailScreen) {
+function EmailScreen({
+  isLoading,
+  email,
+  setEmail,
+  handleSendCode,
+}: IEmailScreen) {
   const [opened, { toggle }] = useDisclosure();
   return (
     <>
@@ -42,10 +48,12 @@ function EmailScreen({ email, setEmail, handleSendCode }: IEmailScreen) {
         <Text size="sm">Because we said so.</Text>
       </Collapse>
       <Group mt="xl" position="right">
-        <Button variant="light" color="gray" onClick={() => false}>
-          Cancel
-        </Button>
-        <Button variant="filled" color="blue" onClick={handleSendCode}>
+        <Button
+          variant="filled"
+          color="blue"
+          onClick={handleSendCode}
+          loading={isLoading}
+        >
           Send code
         </Button>
       </Group>
