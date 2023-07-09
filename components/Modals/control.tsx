@@ -3,7 +3,7 @@ import { LoginModal, SignupModal } from ".";
 
 export const openLoginModal = () =>
   modals.open({
-    title: "Log in to SendId",
+    title: "Log in to SendIt",
     children: <LoginModal variant="LOGIN" />,
   });
 

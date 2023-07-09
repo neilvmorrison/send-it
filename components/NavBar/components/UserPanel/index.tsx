@@ -9,18 +9,20 @@ import {
   ThemeIcon,
 } from "@mantine/core";
 import { IconUserQuestion } from "@tabler/icons-react";
+import { CognitoUser } from "@aws-amplify/auth";
 
 interface IUserPanel {
-  isAuthenticated: boolean;
+  currentAuthenticatedUser: CognitoUser | null;
   handleOpenLoginModal: () => void;
   handleProfileRedirect: () => void;
 }
 
 function UserPanel({
-  isAuthenticated,
+  currentAuthenticatedUser,
   handleProfileRedirect,
   handleOpenLoginModal,
 }: IUserPanel) {
+  console.log(currentAuthenticatedUser);
   const theme = useMantineTheme();
   return (
     <Box
@@ -34,7 +36,11 @@ function UserPanel({
       }}
     >
       <UnstyledButton
-        onClick={isAuthenticated ? handleProfileRedirect : handleOpenLoginModal}
+        onClick={
+          currentAuthenticatedUser
+            ? handleProfileRedirect
+            : handleOpenLoginModal
+        }
         sx={{
           display: "block",
           width: "100%",
@@ -52,7 +58,7 @@ function UserPanel({
         }}
       >
         <Group>
-          {isAuthenticated ? (
+          {currentAuthenticatedUser ? (
             <Avatar
               src="https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=255&q=80"
               radius="xl"
@@ -64,11 +70,11 @@ function UserPanel({
           )}
           <Box sx={{ flex: 1 }}>
             <Text size="sm" weight={500}>
-              {isAuthenticated ? "notacunt_44" : "Unregistered user"}
+              {currentAuthenticatedUser ? "notacunt_44" : "Unregistered user"}
             </Text>
             <Text color="dimmed" size="xs">
-              {isAuthenticated
-                ? "my.throwaway.email@gmail.com"
+              {currentAuthenticatedUser
+                ? currentAuthenticatedUser.getUsername()
                 : "Click here to sign in"}
             </Text>
           </Box>

@@ -4,15 +4,15 @@ import { useAuthContext } from "@/contexts/AuthContext";
 
 function usePrivateRoute() {
   const router = useRouter();
-  const { isAuthenticated, isLoading } = useAuthContext();
+  const { currentAuthenticatedUser, isLoading } = useAuthContext();
   useEffect(() => {
     if (isLoading) {
       return;
     }
-    if (!isAuthenticated) {
+    if (!currentAuthenticatedUser) {
       router.back();
     }
-  }, [isLoading, isAuthenticated]);
+  }, [isLoading, currentAuthenticatedUser]);
 }
 
 export default usePrivateRoute;

@@ -8,6 +8,8 @@ import Layout from "@/components/Layout";
 import { ModalProvider, SpotlightProvider } from "@/components";
 import AuthContextProvider from "@/contexts/AuthContext";
 import ProfileProvier from "@/contexts/ProfileContext";
+import { QueryClientProvider } from "react-query";
+import { queryClient } from "@/config/reactQuery";
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
@@ -40,26 +42,28 @@ export default function App(props: AppProps) {
           content="minimum-scale=1, initial-scale=1, width=device-width"
         />
       </Head>
-      <MantineProvider
-        withGlobalStyles
-        withNormalizeCSS
-        theme={{
-          colorScheme: "light",
-        }}
-      >
-        <AuthContextProvider>
-          <ProfileProvier>
-            <SpotlightProvider>
-              <ModalProvider>
-                <Layout>
-                  <Component {...pageProps} />
-                  <Notifications />
-                </Layout>
-              </ModalProvider>
-            </SpotlightProvider>
-          </ProfileProvier>
-        </AuthContextProvider>
-      </MantineProvider>
+      <QueryClientProvider client={queryClient}>
+        <MantineProvider
+          withGlobalStyles
+          withNormalizeCSS
+          theme={{
+            colorScheme: "light",
+          }}
+        >
+          <AuthContextProvider>
+            <ProfileProvier>
+              <SpotlightProvider>
+                <ModalProvider>
+                  <Layout>
+                    <Component {...pageProps} />
+                    <Notifications />
+                  </Layout>
+                </ModalProvider>
+              </SpotlightProvider>
+            </ProfileProvier>
+          </AuthContextProvider>
+        </MantineProvider>
+      </QueryClientProvider>
     </>
   );
 }

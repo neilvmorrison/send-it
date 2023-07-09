@@ -1,4 +1,5 @@
 import { Profile } from ".prisma/client";
+import { useMutation } from "react-query";
 import React, {
   useState,
   createContext,
@@ -30,14 +31,25 @@ function ProfileProvier({ children }: IProfileProvider) {
   const [userProfiles, setUserProfiles] = useState([]);
   const [activeProfile, setActiveProfile] = useState(null);
 
-  // Cognito/Amplify typing is whack. This definitely exists on type CognitoUser;
   async function getUserPrfofilesByEmail() {}
+
+  async function createUserProfile(payload: Profile) {
+    return fetch("/api/profile", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  }
+
+  const useCreateProfileMutation = useMutation((profilePayload: Profile) => {
+    return createUserProfile(profilePayload);
+  });
 
   const context = useMemo(
     () => ({
       activeProfile,
       setActiveProfile,
       userProfiles,
+      useCreateProfileMutation,
     }),
     [activeProfile, currentAuthenticatedUser]
   );

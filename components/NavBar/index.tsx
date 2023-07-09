@@ -33,11 +33,11 @@ interface INavbar {
 }
 
 function NavBar({ opened, onClose }: INavbar) {
-  const { isAuthenticated } = useAuthContext();
+  const { currentAuthenticatedUser } = useAuthContext();
   const handleOpenLoginModal = () => {
     modals.open({
       title: "Log in to SendIt",
-      children: <LoginModal />,
+      children: <LoginModal variant="LOGIN" />,
     });
   };
   return (
@@ -102,7 +102,7 @@ function NavBar({ opened, onClose }: INavbar) {
             </Button.Group>
           </Box>
           <UserPanel
-            isAuthenticated={isAuthenticated}
+            currentAuthenticatedUser={currentAuthenticatedUser}
             handleOpenLoginModal={handleOpenLoginModal}
             handleProfileRedirect={() => alert("Profile!")}
           />

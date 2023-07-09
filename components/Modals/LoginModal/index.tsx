@@ -3,19 +3,14 @@ import { useAuthContext } from "@/contexts/AuthContext";
 
 import EmailScreen from "./EmailScreen";
 import CodeScreen from "./CodeScreen";
-import SuccessScreen from "./SuccessScreen";
 
 interface ILoginModal {
   variant: "SIGN_UP" | "LOGIN";
 }
 
 function LoginModal({ variant }: ILoginModal) {
-  const {
-    loginUser,
-    sendChallengeResponse,
-    signUpUserAndLogin,
-    confirmSignUp,
-  } = useAuthContext();
+  const { loginUser, sendChallengeResponse, signUpUserAndLogin } =
+    useAuthContext();
 
   const [activeSlide, setActiveSlide] = useState(0);
   const [email, setEmail] = useState("");
@@ -28,17 +23,11 @@ function LoginModal({ variant }: ILoginModal) {
 
   const handleSubmitCode = async () => {
     await sendChallengeResponse(code);
-    setActiveSlide(2);
   };
 
   const handleSendSignupCode = async () => {
     await signUpUserAndLogin(email);
     setActiveSlide(1);
-  };
-
-  const handleSubmitSignupCode = async () => {
-    await confirmSignUp(code);
-    setActiveSlide(2);
   };
 
   switch (activeSlide) {
@@ -59,13 +48,9 @@ function LoginModal({ variant }: ILoginModal) {
           code={code}
           setCode={setCode}
           handleChangeSlide={setActiveSlide}
-          handleSubmitCode={
-            variant === "LOGIN" ? handleSubmitCode : handleSubmitSignupCode
-          }
+          handleSubmitCode={variant === "LOGIN" ? handleSubmitCode : () => {}}
         />
       );
-    case 2:
-      return <SuccessScreen />;
     default:
       return null;
   }

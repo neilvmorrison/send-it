@@ -102,6 +102,7 @@ model CommentVotes {
   comment   Comment @relation(fields: [commentId], references: [id])
   profileId String
   commentId String
+  score     Int
 
   @@id([profileId, commentId])
 }
@@ -111,6 +112,7 @@ model PostVotes {
   post      Post    @relation(fields: [postId], references: [id])
   profileId String
   postId    String
+  score     Int
 
   @@id([profileId, postId])
 }

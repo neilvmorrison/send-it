@@ -1,3 +1,5 @@
+import { useRouter } from "next/navigation";
+import CreateProfileOverlay from "@/components/CreateProfileOverlay";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { Menu, ThemeIcon, ScrollArea } from "@mantine/core";
 import {
@@ -7,24 +9,7 @@ import {
   IconMessage2,
   IconUserPlus,
 } from "@tabler/icons-react";
-
-const headerDropdownActions = [
-  {
-    label: "Settings",
-    icon: <IconSettings size={14} />,
-    action: () => alert("Settings Clicked!"),
-  },
-  {
-    label: "View my account",
-    icon: <IconUser size={14} />,
-    action: () => alert("Account Clicked!"),
-  },
-  {
-    label: "Messages",
-    icon: <IconMessage2 size={14} />,
-    action: () => alert("Messaged Clicked!"),
-  },
-];
+import { useState } from "react";
 
 interface IProfileIcon {
   icon: React.ReactNode;
@@ -42,45 +27,31 @@ function ProfileIcon({ icon, color }: IProfileIcon) {
 interface IAuthenticatedMenu {}
 
 function AuthenticatedMenu({}: IAuthenticatedMenu) {
-  const { logoutUser } = useAuthContext();
-  const profiles = [
+  const router = useRouter();
+  const { logoutUser, currentAuthenticatedUser } = useAuthContext();
+  const [showProfileOverlay, setShowProfileOverlay] = useState(false);
+  const toggleProfileOverlay = () => setShowProfileOverlay((prev) => !prev);
+
+  const headerDropdownActions = [
     {
-      username: "notacunt",
-      color: "blue",
+      label: "Settings",
+      icon: <IconSettings size={14} />,
+      action: () => alert("Settings Clicked!"),
     },
     {
-      username: "toby_mcguires_spideysuit",
-      color: "green",
+      label: "View my account",
+      icon: <IconUser size={14} />,
+      action: () => router.push("/account"),
     },
     {
-      username: "not_lewis_hamilton_44",
-      color: "orange",
+      label: "Messages",
+      icon: <IconMessage2 size={14} />,
+      action: () => alert("Messaged Clicked!"),
     },
   ];
 
   return (
     <>
-      {profiles.length > 1 && (
-        <>
-          <Menu.Label>Profiles</Menu.Label>
-          <ScrollArea h={115} type="scroll">
-            {profiles.map((profile) => (
-              <Menu.Item
-                key={profile.username}
-                icon={
-                  <ProfileIcon
-                    color={profile.color}
-                    icon={<IconUser size={14} />}
-                  />
-                }
-              >
-                {profile.username}
-              </Menu.Item>
-            ))}
-          </ScrollArea>
-          <Menu.Divider />
-        </>
-      )}
       <Menu.Label>Account Management</Menu.Label>
       {headerDropdownActions.map((action) => (
         <Menu.Item
@@ -92,7 +63,11 @@ function AuthenticatedMenu({}: IAuthenticatedMenu) {
         </Menu.Item>
       ))}
       <Menu.Divider />
-      <Menu.Item color="blue" icon={<IconUserPlus size={14} />}>
+      <Menu.Item
+        color="blue"
+        icon={<IconUserPlus size={14} />}
+        onClick={() => setShowProfileOverlay(true)}
+      >
         Create a profile
       </Menu.Item>
       <Menu.Item
@@ -102,6 +77,10 @@ function AuthenticatedMenu({}: IAuthenticatedMenu) {
       >
         Log out
       </Menu.Item>
+      <CreateProfileOverlay
+        opened={showProfileOverlay}
+        onClose={toggleProfileOverlay}
+      />
     </>
   );
 }
